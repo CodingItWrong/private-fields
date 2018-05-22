@@ -15,7 +15,10 @@ export function getBody(post) {
 }
 
 class BlogPost {
-  constructor({ ...attributes }) {
+  #id;
+
+  constructor({ id, ...attributes }) {
+    this.#id = id;
     Object.assign(this, attributes);
   }
 }
