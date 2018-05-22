@@ -1,6 +1,6 @@
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
-import { getSummaries, getBody } from '../src/BlogPostService';
+import { getSummaries } from '../src/BlogPostService';
 
 describe('BlogPostService', () => {
   describe('getSummaries', () => {
@@ -21,7 +21,7 @@ describe('BlogPostService', () => {
       getSummaries()
         .then(summaries => {
           const post = summaries[0];
-          getBody(post)
+          post.getBody()
             .then(() => {
               expect(post.body).to.equal(body);
             });

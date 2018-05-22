@@ -7,18 +7,18 @@ export function getSummaries() {
     ));
 }
 
-export function getBody(post) {
-  return get(`blogPosts/${post.id}`)
-    .then(response => {
-      post.body = response.body;
-    });
-}
-
 class BlogPost {
   #id;
 
   constructor({ id, ...attributes }) {
     this.#id = id;
     Object.assign(this, attributes);
+  }
+
+  getBody() {
+    return get(`blogPosts/${this.#id}`)
+      .then(response => {
+        this.body = response.body;
+      });
   }
 }
