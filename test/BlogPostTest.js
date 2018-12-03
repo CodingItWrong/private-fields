@@ -5,7 +5,7 @@ import { getSummaries, BlogPost } from '../src/BlogPostService';
 describe('BlogPostService', () => {
   describe('getSummaries', () => {
     it('returns blog posts without bodies', () => {
-      getSummaries()
+      return getSummaries()
         .then(summaries => {
           const post = summaries[0];
           expect(post.title).to.not.be.null;
@@ -18,7 +18,7 @@ describe('BlogPostService', () => {
     it('adds the body to the blog post', () => {
       const body = 'This is the body.';
 
-      getSummaries()
+      return getSummaries()
         .then(summaries => {
           const post = summaries[0];
           post.getBody()
