@@ -10,6 +10,12 @@ const detail = {
   body: 'This is the body.',
 };
 
+const newComment = {
+  data: {
+    id: 27,
+  },
+};
+
 export function get(path) {
   if (path === 'blogPosts') {
     return Promise.resolve(summaries);
@@ -18,4 +24,8 @@ export function get(path) {
   } else {
     return Promise.reject();
   }
+}
+
+export function post() {
+  return Promise.resolve(newComment);
 }

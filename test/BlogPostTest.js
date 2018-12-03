@@ -1,6 +1,6 @@
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
-import { getSummaries } from '../src/BlogPostService';
+import { getSummaries, BlogPost } from '../src/BlogPostService';
 
 describe('BlogPostService', () => {
   describe('getSummaries', () => {
@@ -25,6 +25,22 @@ describe('BlogPostService', () => {
             .then(() => {
               expect(post.body).to.equal(body);
             });
+        });
+    });
+  });
+
+  describe('postComment', () => {
+    it('returns a new comment', () => {
+      const commentData = {
+        title: 'This is a comment',
+        sender: 'Me',
+      };
+
+      const blogPost = new BlogPost({ id: 42 });
+      return blogPost.postComment(commentData)
+        .then(comment => {
+          expect(comment.title).to.deep.equal(commentData.title);
+          expect(comment.sender).to.deep.equal(commentData.sender);
         });
     });
   });

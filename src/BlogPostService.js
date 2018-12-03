@@ -7,7 +7,7 @@ export function getSummaries() {
     ));
 }
 
-class BlogPost {
+export class BlogPost {
   #id;
 
   constructor({ id, ...attributes }) {
@@ -23,38 +23,62 @@ class BlogPost {
   }
 
   postComment(commentData) {
-    return post(this.url(), this.requestPayload(commentData))
-      .then(response => this.handleResponse(response, commentData))
-      .catch(error => this.handleError(error));
+    return new CommentSender({
+      blogPost: this,
+      id: this.#id,
+      commentData,
+    }).send();
+  }
+}
+
+class CommentSender {
+  #blogPost;
+  #id;
+  #commentData;
+
+  constructor({ blogPost, id, commentData }) {
+    this.#blogPost = blogPost;
+    this.#id = id;
+    this.#commentData = commentData;
   }
 
-  url() {
+  send() {
+    return post(this.#url(), this.#requestPayload())
+      .then(response => this.#handleResponse(response))
+      .catch(error => this.#handleError(error));
+  }
+
+  #url() {
     return `blogPosts/${this.#id}/comments`;
   }
 
-  requestPayload(commentData) {
+  #requestPayload() {
     return {
       data: {
         type: 'comment',
-        attributes: commentData,
+        attributes: this.#commentData,
       },
     };
   }
 
-  handleResponse(response, commentData) {
+  #handleResponse(response) {
     const { id } = response.data;
-    return new Comment({ id, blogPost: this, ...commentData });
+    return new Comment({
+      id,
+      blogPost: this.#blogPost,
+      ...this.#commentData,
+    });
   }
 
-  handleError(error) {
+  #handleError(error) {
     switch (error.status) {
     case 500:
       throw new Error(
-        `A server error occurred when trying to comment on "${this.title}"`,
+        `A server error occurred when trying to comment on "${this.#blogPost.title}"`,
       );
     case 403:
       throw new Error(
-        `Sorry, you do not have access to comment on "${this.title}".`,
+        `Sorry, you do not have access to comment on "${this.#blogPost.title}".`,
       );
     }
   }
