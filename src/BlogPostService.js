@@ -23,32 +23,40 @@ class BlogPost {
   }
 
   postComment(commentData) {
-    const url = `blogPosts/${this.#id}/comments`;
+    return post(this.url(), this.requestPayload(commentData))
+      .then(response => this.handleResponse(response, commentData))
+      .catch(error => this.handleError(error));
+  }
 
-    const requestPayload = {
+  url() {
+    return `blogPosts/${this.#id}/comments`;
+  }
+
+  requestPayload(commentData) {
+    return {
       data: {
         type: 'comment',
         attributes: commentData,
       },
     };
+  }
 
-    return post(url, requestPayload)
-      .then(response => {
-        const { id } = response.data;
-        return new Comment({ id, blogPost: this, ...commentData });
-      })
-      .catch(error => {
-        switch (error.status) {
-        case 500:
-          throw new Error(
-            `A server error occurred when trying to comment on "${this.title}"`,
-          );
-        case 403:
-          throw new Error(
-            `Sorry, you do not have access to comment on "${this.title}".`,
-          );
-        }
-      });
+  handleResponse(response, commentData) {
+    const { id } = response.data;
+    return new Comment({ id, blogPost: this, ...commentData });
+  }
+
+  handleError(error) {
+    switch (error.status) {
+    case 500:
+      throw new Error(
+        `A server error occurred when trying to comment on "${this.title}"`,
+      );
+    case 403:
+      throw new Error(
+        `Sorry, you do not have access to comment on "${this.title}".`,
+      );
+    }
   }
 }
 
